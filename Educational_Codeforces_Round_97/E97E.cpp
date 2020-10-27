@@ -18,6 +18,8 @@ int a[maxn], b[maxn];
 
 int lis[maxn], p[maxn];
 int my_inf = 1<<30;
+
+bool in_valid[maxn];
 int main(){
   scanf("%d %d", &n, &k);
   for(int i=1;i<=n;i++)
@@ -30,36 +32,40 @@ int main(){
       return 0;
     }
   }
-  int pos = 1;
-  if(k==0)
-    pos = -1;
-  for(int i=1;i<=n;i++)
-    lis[i]=my_inf;
-  int ans = n;
+  int pos = -1;
   for(int i=1;i<=n;i++){
-    int id = lower_bound(lis+1, lis+n+1, a[i]) - lis;
-    if(pos!=-1){
+    lis[i]=my_inf;
+  }
+  if(k!=0){
+    pos=1;
+    for(int i=1;i<=n;i++){
       if(pos<=k){
         if(b[pos]-i>a[b[pos]]-a[i])
-          continue;
+          in_valid[i]=true;
       }
       if(pos>1){
         if(i-b[pos-1]>a[i]-a[b[pos-1]])
-          continue;
+          in_valid[i]=true;
       }
       if(pos<=k && b[pos]==i)
         pos++;
     }
-    if((id==1 || i-p[id-1]<=a[i]-lis[id-1])){
+  }
+  for(int i=1;i<=n;i++)
+    a[i]=a[i]-i;
+  int ans = n;
+  for(int i=1;i<=n;i++){
+    if(!in_valid[i]){
+      int id = upper_bound(lis+1, lis+n+1, a[i]) - lis;
       lis[id]= a[i];
       p[id]=i;
       ans = min(ans, n-id);
     }
   }
-  cout<<"hello"<<endl;
-  for(int i=1;i<=n;i++)
-    cout<<lis[i]<<" ";
-  cout<<endl;
+  //cout<<"hello"<<endl;
+  //for(int i=1;i<=n;i++)
+  //  cout<<lis[i]<<" ";
+  //cout<<endl;
   cout<<ans<<endl;
 
 
